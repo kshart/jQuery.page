@@ -1,23 +1,15 @@
-import {History} from "./jquery.history.js"
-
-(function($, History, window, document, undefined) {
-	"use strict";
-	if (!Array.prototype.find) {
-		Array.prototype.find = function(predicate) {
-			if (this==null) throw new TypeError('Array.prototype.find called on null or undefined');
-			if (typeof predicate !== 'function') throw new TypeError('predicate must be a function');
-			var list = Object(this);
-			var length = list.length >>> 0;
-			var thisArg = arguments[1];
-			var value;
-
-			for (var i=0; i<length; i++) {
-				value = list[i];
-				if (predicate.call(thisArg, value, i, list)) return value;
-			}
-			return undefined;
-		};
+//(require("jquery"), require("History"), window, document
+//(function($, History, window, document, undefined) {
+(function (factory) {
+	if (typeof define==='function' && define.amd) {
+		define(['jquery', 'History'], factory);
+	}else if (typeof exports==='object' && typeof require==='function') {
+		factory(require('jquery'), require('History'));
+	}else{
+		factory(jQuery, History);
 	}
+}(function($, _History, undefined) {
+	"use strict";
 	var noop = function(){},
 		_nodelist = [],
 		_nodeVisible = [],
@@ -175,8 +167,12 @@ import {History} from "./jquery.history.js"
 			enumerable:false,
 			writable:false,
 			value:function() {
-				var url = window.location.pathname, config = History.getState().data;
-				if (config===undefined) config = {};
+				var url = window.location.pathname, config = History.getState();
+				if (typeof config.data==="object") {
+					config = config.data;
+				}else{
+					config = {};
+				}
 				config.overURL = "";
 				var reg, maxLength = _nodelist[0].url.length, maxNode = _nodelist[0];
 				for(var i in _nodelist) {
@@ -211,4 +207,4 @@ import {History} from "./jquery.history.js"
 		state.data.options.pushHistoryState = false;
 		$.page.open(state.data.url, state.data.options);
 	});
-})(jQuery, History, window, document);
+}));

@@ -16,11 +16,13 @@ module.exports = function (grunt) {
 		},
 		browserify: {
 			options: {
+				alias: {
+					'History':'./files/jquery.history.js'
+				},
 				browserifyOptions: {debug: true},
 				transform: true ? [['babelify', {presets: ['es2015']}]]:undefined
 			},
 			build: {
-				sourceType:'module',
 				files: {
 					'public_html/require.js': ['files/jquery.page.js', 'files/main.js']
 				},
@@ -32,7 +34,6 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-contrib-clean');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-browserify');
-	//grunt.loadNpmTasks('grunt-contrib-requirejs');
 	grunt.registerTask('build', [
 		'copy',
 		'browserify',
