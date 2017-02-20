@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+	<head>
+		<title>TODO supply a title</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	</head>
+	<body>
+		<a onclick="$.page.open('/');">Главная</a>
+		<a onclick="$.page.open('/catalog');">historyg</a>
+		<a onclick="$.page.open('/catalog/e/124');">history hui</a>
+		<a onclick="$.page.open('/catalog/e/moi');">history huim</a>
+		<a onclick="$.page.open('/catalog/e/tvoi');">history huit</a>
+		<div id="content"></div>
+		<script src="jquery-1.0.js"></script>
+		<script src="jquery.history.js"></script>
+		<script src="jquery.page.js"></script>
+		<script>
+			$.page.create([
+				{url:"/", property:{
+					urlEqual:false,
+					title:"Титл",
+					onshow:function(e) {
+						console.log(this.title);
+						$("#content").html("Главная страница.");
+					}
+				}},
+				{url:"/catalog", property:{
+					title:"Титлgg",
+					onshow:function(e) {
+						console.log(this.title);
+						$("#content").html("Каталог.<div id='catalog_id'></div><p id='catalog_preloader_id'></p>");
+					},
+					onupdate:function(e) {
+						$("#catalog_preloader_id").html("load"+e.url);
+					}
+				}},
+				{url:"/catalog/e", property:{
+					urlEqual:false,
+					title:"Категория е",
+					parent:"/catalog",
+					onshow:function(e) {
+						console.log(this.title);
+						$("#catalog_id").html("Категория е"+e.options.overURL+".<div id='catalog_e_id'></div>");
+					},
+					onupdate:function(e) {
+						$("#catalog_id").text("Категория е"+e.options.overURL+".");
+					},
+					onhide:function(e) {
+						$("#catalog_id").html("");
+					}
+				}},
+				{url:"/catalog/e/moi", property:{
+					title:"moi",
+					parent:"/catalog/e",
+					onshow:function(e) {
+						console.log(this.title);
+						$("#catalog_e_id").html("moi");
+					},
+					onhide:function(e) {
+						console.log("hide"+e.url);
+					}
+				}},
+				{url:"/catalog/e/tvoi", property:{
+					title:"tvoi",
+					parent:"/catalog/e",
+					onshow:function(e) {
+						$("#catalog_e_id").html("tvoi");
+					},
+					onhide:function(e) {
+						console.log("hide"+e.url);
+					}
+				}}
+			]);
+			$.page.init();
+		</script>
+	</body>
+</html>
