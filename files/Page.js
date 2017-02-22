@@ -15,10 +15,16 @@ import {PageNode} from "./PageNode.js"
 let _nodelist = [];
 
 class Page {
+	/**
+	 * @description  
+	 * @param {String} url
+	 * @param {Object} options
+	 * @return {Boolean} if page nodes create success return true 
+	 */
 	static create(url, options) {
-		if (typeof url === "object"&&url instanceof Array) {
+		if (typeof url==="object" && url instanceof Array) {
 			for(var objI in url) {
-				if (!(typeof url[objI].options === "object")||!(typeof url[objI].url === "string")) {
+				if (typeof url[objI].options!=="object" || typeof url[objI].url!=="string") {
 					console.error(this, "$.page.create([{options:{}, url:''}]); options not Object or url not String");
 					return false;
 				}

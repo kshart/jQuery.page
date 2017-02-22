@@ -28,8 +28,8 @@
  * 
  */
 
-require('jquery')
-require('History')
+require('jquery');
+require('History');
 
 export {$}
 export {History}
