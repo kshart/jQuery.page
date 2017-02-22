@@ -17,9 +17,13 @@ module.exports = function (grunt) {
 		browserify: {
 			options: {
 				alias: {
-					'History':'./files/jquery.history.js'
+					'History':'./files/jquery.history.js',
+					'jquery':'./../jquery/jquery-2.0.0.js'
 				},
-				browserifyOptions: {debug: true},
+				browserifyOptions: {
+					debug: true,
+					dedupe: true
+				},
 				transform: true ? [['babelify', {presets: ['es2015']}]]:undefined
 			},
 			build: {

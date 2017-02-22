@@ -9,7 +9,7 @@
  *    Артем - initial API and implementation and/or initial documentation
  */
 $.page.create([
-				{url:"/", property:{
+				{url:"/", options:{
 					urlEqual:false,
 					title:"Титл",
 					onshow:function(e) {
@@ -17,7 +17,7 @@ $.page.create([
 						$("#content").html("Главная страница.");
 					}
 				}},
-				{url:"/catalog", property:{
+				{url:"/catalog", options:{
 					title:"Титлgg",
 					onshow:function(e) {
 						console.log(this.title);
@@ -27,7 +27,7 @@ $.page.create([
 						$("#catalog_preloader_id").html("load"+e.url);
 					}
 				}},
-				{url:"/catalog/e", property:{
+				{url:"/catalog/e", options:{
 					urlEqual:false,
 					title:"Категория е",
 					parent:"/catalog",
@@ -42,7 +42,7 @@ $.page.create([
 						$("#catalog_id").html("");
 					}
 				}},
-				{url:"/catalog/e/moi", property:{
+				{url:"/catalog/e/moi", options:{
 					title:"moi",
 					parent:"/catalog/e",
 					onshow:function(e) {
@@ -53,7 +53,7 @@ $.page.create([
 						console.log("hide"+e.url);
 					}
 				}},
-				{url:"/catalog/e/tvoi", property:{
+				{url:"/catalog/e/tvoi", options:{
 					title:"tvoi",
 					parent:"/catalog/e",
 					onshow:function(e) {

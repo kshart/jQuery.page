@@ -1,19 +1,8 @@
 {
-  "name": "jquery.page",
+  "name": "jquery-page",
   "version": "0.1.0",
-  "browser": {
-    "jquery": "./node_modules/jquery/dist/jquery.js"
-  },
-  "browserify-shim": {
-    "jquery": "$"
-  },
-  "browserify": {
-    "transform": [
-      "browserify-shim"
-    ]
-  },
+  "main": "./files/jquery.page.js",
   "dependencies": {
-    "jquery": "^2.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.23.0",

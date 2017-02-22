@@ -1,5 +1,32 @@
 //(require("jquery"), require("History"), window, document
 //(function($, History, window, document, undefined) {
+/*
+ * 
+ * $.page.create(url, options:{
+ * * extend {}
+ * * urlEqual true|false
+ * * historyName String
+ * * title String
+ * * onhide, onhide, onshow(e:{url, extend, options:{
+ * * * pushHistoryState:false|true
+ * * * fullURL:String
+ * * * overURL:String
+ * * * direction:"next"|"prev"
+ * * }})
+ * * parent url
+ * });
+ * $.page.open();
+ * $.page.init();
+ * $.page.next();
+ * $.page.prev();
+ * 
+ * @param {type} factory
+ * @returns {undefined}
+ * 
+ * 
+ * 
+ * 
+ */
 (function (factory) {
 	if (typeof define==='function' && define.amd) {
 		define(['jquery', 'History'], factory);
@@ -39,64 +66,64 @@
 		onhide:noop,
 		onupdate:noop,
 		open:function (node, newNodeVisible, options, itr) {
-		var that = this;
-		if (itr<=MAX_TREE_DEEP) {
-			if (typeof this.parent === "string") {
-				var parent = _nodelist.find(function(e){return e.url===that.parent;});
-				if (parent === undefined) {
-					console.error(this, "URL:"+this.parent+" not found/"); 
-				}else{
-					this.parent = parent;
-					parent.open(node, newNodeVisible, options, itr+1);
-				}
-			}else if (typeof this.parent === "object") {
-				this.parent.open(node, newNodeVisible, options, itr+1);
-			}
-		}
-		newNodeVisible.push(this);
-		if (node===this) {
-			var nodeEQid = -1;
-			if (options.pushHistoryState!==false) History.pushState({url:options.fullURL, options:options}, this.title, options.fullURL);
-			newNodeVisible.find(function(item){
-				return item===_nodeVisible.find(function(item2, id){
-					if (item2===item) {
-						nodeEQid = id;
-						return true;
+			var that = this;
+			if (itr<=MAX_TREE_DEEP) {
+				if (typeof this.parent === "string") {
+					var parent = _nodelist.find(function(e){return e.url===that.parent;});
+					if (parent === undefined) {
+						console.error(this, "URL:"+this.parent+" not found/"); 
+					}else{
+						this.parent = parent;
+						parent.open(node, newNodeVisible, options, itr+1);
 					}
-					return false;
-				});
-			});
-			for(var i=nodeEQid+1; i<_nodeVisible.length; ++i) {
-				_nodeVisible[i].onhide({
-					url:this.url,
-					extend:this.extend,
-					options:options
-				});
+				}else if (typeof this.parent === "object") {
+					this.parent.open(node, newNodeVisible, options, itr+1);
+				}
 			}
-			i = 0;
-			++nodeEQid;
-			if (nodeEQid>0) while(i<newNodeVisible.length) {
-				if (i===nodeEQid) break;
-				newNodeVisible[i].onupdate({
-					url:this.url,
-					extend:this.extend,
-					options:options
+			newNodeVisible.push(this);
+			if (node===this) {
+				var nodeEQid = -1;
+				if (options.pushHistoryState!==false) History.pushState({url:options.fullURL, options:options}, this.title, options.fullURL);
+				newNodeVisible.find(function(item){
+					return item===_nodeVisible.find(function(item2, id){
+						if (item2===item) {
+							nodeEQid = id;
+							return true;
+						}
+						return false;
+					});
 				});
-				++i;
+				for(var i=nodeEQid+1; i<_nodeVisible.length; ++i) {
+					_nodeVisible[i].onhide({
+						url:this.url,
+						extend:this.extend,
+						options:options
+					});
+				}
+				i = 0;
+				++nodeEQid;
+				if (nodeEQid>0) while(i<newNodeVisible.length) {
+					if (i===nodeEQid) break;
+					newNodeVisible[i].onupdate({
+						url:this.url,
+						extend:this.extend,
+						options:options
+					});
+					++i;
+				}
+				while(i<newNodeVisible.length) {
+					newNodeVisible[i].onshow({
+						url:this.url,
+						extend:this.extend,
+						options:options
+					});
+					++i;
+				}
+				_nodeVisible = newNodeVisible;
+				document.title = this.title;
+				$(document).trigger("page.change", options.fullURL);
 			}
-			while(i<newNodeVisible.length) {
-				newNodeVisible[i].onshow({
-					url:this.url,
-					extend:this.extend,
-					options:options
-				});
-				++i;
-			}
-			_nodeVisible = newNodeVisible;
-			document.title = this.title;
-			$(document).trigger("page.change", options.fullURL);
 		}
-	}
 	};
 	$.page = {};
 	Object.defineProperties($.page, {
@@ -104,29 +131,29 @@
 			configurable:false,
 			enumerable:false,
 			writable:false,
-			value:function(url, property) {
+			value:function(url, options) {
 				if (typeof url === "object"&&url instanceof Array) {
 					for(var objI in url) {
-						if (!(typeof url[objI].property === "object")||!(typeof url[objI].url === "string")) {
-							console.error(this, "$.page.create([{property:{}, url:''}]); property not Object or url not String");
+						if (!(typeof url[objI].options === "object")||!(typeof url[objI].url === "string")) {
+							console.error(this, "$.page.create([{options:{}, url:''}]); options not Object or url not String");
 							return false;
 						}
-						var node = new Node(url[objI].url, url[objI].property);
+						var node = new Node(url[objI].url, url[objI].options);
 						if (node===undefined) {
-							console.error(this, "$.page.create(url, property); property invalid attribute");
+							console.error(this, "$.page.create(url, options); property invalid attribute");
 							return false;
 						}
 						_nodelist.push(node);
 					}
 					return true;
 				}else if (typeof url === "string") {
-					if (!(typeof property === "object")) {
-						console.error(this, "$.page.create(url, property); property not Object");
+					if (!(typeof options === "object")) {
+						console.error(this, "$.page.create(url, options); options not Object");
 						return false;
 					}
-					var node = new Node(url, property);
+					var node = new Node(url, options);
 					if (node===undefined) {
-						console.error(this, "$.page.create(url, property); property invalid attribute");
+						console.error(this, "$.page.create(url, options); options invalid attribute");
 						return false;
 					}
 					_nodelist.push(node);
@@ -141,15 +168,16 @@
 			configurable:false,
 			enumerable:false,
 			writable:false,
-			value:function(url, config) {
-				if (_nodelist.lenght===0||(typeof config!=="object"&&config!==undefined)||typeof url!=="string") return false;
+			value:function(url, options) {
+				if (_nodelist.lenght===0||(typeof options!=="object"&&options!==undefined)||typeof url!=="string") return false;
 				
-				if (config===undefined) config = {};
-				config.fullURL = url;
-				config.overURL = "";
+				if (options===undefined) options = {};
+				options.fullURL = url;
+				options.overURL = "";
+				if (options.direction===undefined) options.direction = "next";
 				var reg, maxLength = _nodelist[0].url.length, maxNode = _nodelist[0];
 				for(var i in _nodelist) {
-					if (_nodelist[i].url===url) return _nodelist[i].open(_nodelist[i], [], config, 0);
+					if (_nodelist[i].url===url) return _nodelist[i].open(_nodelist[i], [], options, 0);
 					if (!_nodelist[i].urlEqual) {
 						reg = new RegExp('^'+_nodelist[i].url, 'i');
 						if (reg.test(url)&&_nodelist[i].url.length>maxLength) {
@@ -158,8 +186,8 @@
 						}
 					}
 				}
-				config.overURL = url.substr(maxLength);
-				return maxNode.open(maxNode, [], config, 0);
+				options.overURL = url.substr(maxLength);
+				return maxNode.open(maxNode, [], options, 0);
 			}
 		},
 		"init":{
@@ -203,8 +231,10 @@
 		}
 	});
 	window.addEventListener('popstate', function() {
-		var state = History.getState();
-		state.data.options.pushHistoryState = false;
+		var state = History.getState(),
+			config = state.data.options;
+		config.pushHistoryState = false;
+		config.direction = "prev";
 		$.page.open(state.data.url, state.data.options);
 	});
 }));
