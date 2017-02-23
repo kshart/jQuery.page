@@ -96,7 +96,7 @@ class Page {
 		config.overURL = url.substr(maxLength);
 		$("[data-page]").each(function() {
 			$(this).on("click", ()=>{
-				$.page.open(this.href);
+				$.page.open(this.getAttribute("href"));
 				return false;
 			});
 		});
