@@ -24,8 +24,8 @@ class PageNode {
 		this.url = url;
 		this.extend			= (typeof options.extend==="object")	? options.extend : {};
 		this.urlEqual		= (typeof options.urlEqual==="boolean") ? options.urlEqual : true;
-		this.historyName	= (typeof options.historyName==="string") ? options.historyName : "";
 		this.title			= (typeof options.title==="string")		? options.title : "";
+		this.historyName	= (typeof options.historyName==="string") ? options.historyName : this.title;
 		this.onshow			= (typeof options.onshow==="function")	? options.onshow : noop;
 		this.onhide			= (typeof options.onhide==="function")	? options.onhide : noop;
 		this.onupdate		= (typeof options.onupdate==="function") ? options.onupdate : noop;
